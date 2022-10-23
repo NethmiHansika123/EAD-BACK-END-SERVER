@@ -1,35 +1,16 @@
 const { Stationowner } = require("../modules/module.stationowner");
 
-const createstationdetails = (req, res, next) => {
-    const {
-        stationname,
-        petrolarrivaltime,
-        petrolfinishtime,
-        dieselarrivaltime,
-        diesellfinishtime,
-        status,
-
-    } = req.body
-
-
-    const stationowner = new Stationowner({
-        stationname: stationname,
-        petrolarrivaltime: petrolarrivaltime,
-        petrolfinishtime: petrolfinishtime,
-        dieselarrivaltime: dieselarrivaltime,
-        diesellfinishtime: diesellfinishtime,
-        status: status,
+const createstationdetails = async (req, res, next) => {
+  let owner = new Stationowner(req.body);
+  await owner
+    .save()
+    .then((owner) => {
+      res.status(200).json({ owner: "owner is added succesfully" });
     })
-
-
-    stationowner.save()
-        .then((Stationowner) => {
-            res.status(200).json({ stationowner: "Station Shedule is added succesfully" });
-          })
-          .catch((err) => {
-            res.status(400).send("unable to save database");
-          });
-}
+    .catch((err) => {
+      res.status(400).send("unable to save database");
+    });
+};
 
 const editDetails = async (req, res) => {
     await Stationowner.findById(req.params.id, function (err, stationowner) {
